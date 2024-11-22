@@ -12,24 +12,6 @@ import TheWelcome from './components/TheWelcome.vue'
 	  </br>
 	  <p>Faleminderit për pjesëmarrjen në eksperiment!</p>
 	</InstructionScreen>
-
-<Screen>
-  <p>1. Çfarë pajisje përdorët për të zhvilluar këtë eksperiment?</p>
-    <MultipleChoiceInput
-        :response.sync= "$magpie.measurements.device"
-        orientation="horizontal"
-        :options="['Computer Mouse', 'Computer Trackpad', 'Tjetër']" />
-  <br>
-  <br>
-  <p>2. Cilën dorë përdorët gjatë eksperiemntit?</p>
-    <MultipleChoiceInput
-        :response.sync= "$magpie.measurements.hand"
-        orientation="horizontal"
-        :options="['Majtë', 'Djathtë', 'Të dyja']" />
-  <button style= "bottom:30%; transform: translate(-50%, -50%)" @click="$magpie.saveAndNextScreen();">Përfundo</button>
-</Screen>
-
-    <SubmitResultsScreen />
   </Experiment>
 </template>
 

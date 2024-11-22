@@ -1,7 +1,3 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
 
 <template>
   <Experiment title="Eksperiment për leximin" translate="no">
@@ -14,6 +10,133 @@ import TheWelcome from './components/TheWelcome.vue'
 	</InstructionScreen>
   </Experiment>
 </template>
+
+<script>
+// Load data from csv files as javascript arrays with objects
+import list1 from '../trials/test_items.tsv';
+import _ from 'lodash';
+
+export default {
+  name: 'App',
+  data() {
+    const trials = list1; 
+    // Create a new column in localCoherences called 'response_options'
+    // that concatenates the word in response_true with the two words in response_distractors
+    const updatedTrials = trials.map(trial => {
+      return {
+        ...trial,
+        response_options: _.shuffle(`${trial.response_true}|${trial.response_distractors}`.replace(/ ?["]+/g, "").split("|")),
+      }
+    });
+    return {
+      isCursorMoving: false,
+      trials: updatedTrials,
+      currentIndex: null,
+      showFirstDiv: true,
+      // currentItem: null,
+      mousePosition: {
+          x: 0,
+          y: 0,
+        },
+  }},
+  computed: {
+  },
+  mounted() { 
+    setInterval(this.saveData, 50);
+    },
+  methods: {
+    changeBack() {
+      this.$el.querySelector(".oval-cursor").classList.remove('grow');
+      this.$el.querySelector(".oval-cursor").classList.remove('blank');
+      this.currentIndex = null;
+    },
+    saveData() {
+        if (this.currentIndex !== null) {
+          const currentElement = this.$el.querySelector(`span[data-index="${this.currentIndex}"]`);
+          if (currentElement) {
+            const currentElementRect = currentElement.getBoundingClientRect();
+            $magpie.addTrialData({
+              Experiment: this.$el.querySelector(".experiment_id").value,
+              Condition: this.$el.querySelector(".condition_id").value,
+              ItemId: this.$el.querySelector(".item_id").value,
+              Index: this.currentIndex,
+              Word: currentElement.innerHTML,
+              mousePositionX: this.mousePosition.x,
+              mousePositionY: this.mousePosition.y,
+              wordPositionTop: currentElementRect.top,
+              wordPositionLeft: currentElementRect.left,
+              wordPositionBottom: currentElementRect.bottom,
+              wordPositionRight: currentElementRect.right
+              // wordPositionTop: currentElement.offsetTop,
+              // wordPositionLeft: currentElement.offsetLeft,
+              // wordPositionBottom: currentElement.offsetHeight + currentElement.offsetTop,
+              // wordPositionRight: currentElement.offsetWidth + currentElement.offsetLeft
+          });
+        } else {
+          $magpie.addTrialData({
+              Experiment: this.$el.querySelector(".experiment_id").value,
+              Condition: this.$el.querySelector(".condition_id").value,
+              ItemId: this.$el.querySelector(".item_id").value,
+              Index: this.currentIndex,
+              mousePositionX: this.mousePosition.x,
+              mousePositionY: this.mousePosition.y,
+          });
+          
+        }
+      }},
+    moveCursor(e) {
+      this.isCursorMoving = true;
+      this.$el.querySelector(".oval-cursor").classList.add('grow');
+      let x = e.clientX;
+      let y = e.clientY;
+      const elementAtCursor= document.elementFromPoint(x, y).closest('span');
+      if (elementAtCursor){
+        this.$el.querySelector(".oval-cursor").classList.remove('blank');
+        this.currentIndex = elementAtCursor.getAttribute('data-index');
+      } else {
+        this.$el.querySelector(".oval-cursor").classList.add('blank');
+        const elementAboveCursor = document.elementFromPoint(x, y-3).closest('span');
+        if (elementAboveCursor){
+          this.currentIndex = elementAboveCursor.getAttribute('data-index');
+        } else {
+          this.currentIndex = -1;
+        }
+      }
+      
+      this.$el.querySelector(".oval-cursor").style.left = `${x+12}px`;
+      this.$el.querySelector(".oval-cursor").style.top = `${y-6}px`;
+      this.mousePosition.x = e.clientX;
+      this.mousePosition.y = e.clientY;
+      // this.mousePosition.x = e.offsetX;
+      // this.mousePosition.y = e.offsetY;
+    },
+    toggleDivs() {
+    this.showFirstDiv = !this.showFirstDiv;
+    this.isCursorMoving = false;
+    },
+   //  async turnOnFullScreen() {
+//       if (!document.fullscreenElement) {
+//         try {
+//           await document.documentElement.requestFullscreen();
+//           return true;
+//         } catch (e) {
+//           return false;
+//         }
+//       }
+//       return true;
+//     },
+//     turnOffFullScreen() {
+//       document.exitFullscreen();
+//     },
+    getScreenDimensions() {
+      return {
+        window_inner_width: window.innerWidth,
+        window_inner_height: window.innerHeight
+      };
+    }
+  },
+};
+</script>
 
 <style scoped>
   .experiment {

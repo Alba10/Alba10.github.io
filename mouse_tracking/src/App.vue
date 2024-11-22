@@ -13,50 +13,6 @@ import TheWelcome from './components/TheWelcome.vue'
 	  <p>Faleminderit për pjesëmarrjen në eksperiment!</p>
 	</InstructionScreen>
 
-    <template v-for="(trial, i) of trials">
-      <Screen :key="i" class="main_screen" :progress="i / trials.length">
-        <Slide>
-          <form>
-            <input type="hidden" class="item_id" :value="trial.item_id">
-            <input type="hidden" class="experiment_id" :value="trial.experiment_id">
-            <input type="hidden" class="condition_id" :value="trial.condition_id">
-          </form>
-          <div class="oval-cursor"></div>
-          <template>
-            <div v-if="showFirstDiv" class="readingText" @mousemove="moveCursor" @mouseleave="changeBack">
-              <template v-for="(word, index) of trial.text.split(' ')">
-                <span :key="index" :data-index="index" >
-                  {{ word }}
-                </span>
-              </template>
-            </div>
-            <div class="blurry-layer" style="opacity: 0.3; filter: blur(3.5px); transition: all 0.3s linear 0s;"> 
-              {{trial.text}}
-            </div>
-          </template>
-          <button v-if="showFirstDiv" style= "bottom:10%; transform: translate(-50%, -50%)" @click="toggleDivs" :disabled="!isCursorMoving">
-          Përfundo
-          </button>
-
-          <div v-else style = "position:absolute; bottom:10%; text-align: center; width: 100%; min-width: -webkit-fill-available;" >
-            <template>
-              <form>
-                <!-- comprehension questions and the response options -->
-                <div>{{ trial.question.replace(/ ?["]+/g, '') }}</div>
-                <template v-for='(word, index) of trial.response_options'>
-                  <input :id="'opt_'+index" type="radio" :value="word" name="opt" v-model="$magpie.measurements.response"/>{{ word }}<br/>
-                    <!-- <label :for="'opt_'+index"> {{ word }}&nbsp</label> -->
-                </template>
-              </form>
-            </template>
-          </div>
-          
-          <button v-if="$magpie.measurements.response" style="transform: translate(-50%, -50%)" @click="toggleDivs(); $magpie.saveAndNextScreen()">
-            Vazhdo
-          </button>
-        </Slide>
-      </Screen>
-    </template>
 <Screen>
   <p>1. Çfarë pajisje përdorët për të zhvilluar këtë eksperiment?</p>
     <MultipleChoiceInput

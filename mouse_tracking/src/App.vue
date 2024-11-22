@@ -78,30 +78,94 @@ import TheWelcome from './components/TheWelcome.vue'
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
+  .experiment {
     display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    align-items: center;
+    justify-content: center;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
+  .main_screen {
+    isolation: isolate;
+    position: relative;
+    width: 100%;
+    height: auto;
+    font-size: 18px;
+    line-height: 40px;
   }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+  .debugResults{
+    width: 100%;
   }
+  .readingText {
+    /* z-index: 1; */
+    position: absolute;
+    color: white;
+    text-align: left;
+    font-weight: 450;
+    cursor: pointer;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    padding-left: 11%;
+    padding-right: 11%;
+  }
+  button {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+  }
+  .oval-cursor {
+    position: fixed;
+    z-index: 2;
+    width: 1px;
+    height: 1px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    mix-blend-mode: difference;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: width 0.5s, height 0.5s;
+  } 
+  .oval-cursor.grow.blank {
+    width: 80px;
+    height: 13px;
+  }
+  .oval-cursor.grow {
+    width: 102px;
+    height: 38px;
+    border-radius: 50%;
+    box-shadow: 30px 0 8px -4px rgba(255, 255, 255, 0.1), -30px 0 8px -4px rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.3);
+    background-blend-mode: screen;
+    pointer-events: none;
+    transition: width 0.5s, height 0.5s;
+    filter:blur(3px);
+  }
+  .oval-cursor.grow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 70%;
+    background-color: white;
+    mix-blend-mode: normal;
+    border-radius: 50%;
 }
+  .blurry-layer {
+    position: absolute;
+    pointer-events: none;
+    color: black;
+    text-align: left;
+    font-weight: 450;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    padding-left: 11%;
+    padding-right: 11%;
+  }
+
+  * {
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    }
 </style>
